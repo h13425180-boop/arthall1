@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>메타버스 AI 원형 로툰다 전시장 (Metaverse Architecture Gallery)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Noto+Serif+KR:wght@400;600;700&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Three.js 3D Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    body { font-family: 'Pretendard', sans-serif; }
+    .serif-title { font-family: 'Noto Serif KR', serif; }
+    .cinzel { font-family: 'Cinzel', serif; }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f5f5f4; }
+    ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 3px; }
+
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .frame-gold {
+      box-shadow: 0 10px 30px -5px rgba(0,0,0,0.3), 0 0 15px rgba(212, 175, 55, 0.4);
+      border: 6px solid #1a1a1a;
+      outline: 2px solid #d4af37;
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease;
+    }
+    .accordion-content.open { max-height: 500px; }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col selection:bg-amber-100 selection:text-amber-900">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-stone-900 flex items-center justify-center border border-amber-400">
+          <i class="fa-solid fa-palette text-amber-400 text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold tracking-tight serif-title text-stone-900 flex items-center gap-2">
+            메타버스 AI 로툰다 전시장 <span class="text-xs cinzel gold-gradient-text px-2 py-0.5 rounded border border-amber-300 font-bold">Architecture Gallery</span>
+          </h1>
+          <p class="text-xs text-stone-500">도면 기반 이중 원형 벽체 전시장 — 관람자 중심 360° 파노라마 & 다층 누적 실습</p>
+        </div>
+      </div>
+      
+      <!-- Nav Tabs -->
+      <nav class="flex bg-stone-100 p-1 rounded-xl border border-stone-200">
+        <button id="tab-atelier" onclick="switchTab('atelier')" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-white text-stone-900 border border-stone-200">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-500 mr-2"></i>AI 아틀리에
+        </button>
+        <button id="tab-gallery" onclick="switchTab('gallery')" class="px-5 py-2 rounded-lg text-sm font-semibold text-stone-600 hover:text-stone-900 transition-all">
+          <i class="fa-solid fa-vr-cardboard text-stone-500 mr-2"></i>🏛️ 이중 원형 전시장 (3D)
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-8">
+    
+    <!-- SECTION 1: AI ATELIER -->
+    <div id="view-atelier" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Control Panel -->
+      <section class="lg:col-span-5 bg-white p-6 rounded-2xl border border-stone-200 shadow-xl shadow-stone-200/50 flex flex-col justify-between space-y-5">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-stone-100 mb-5">
+            <h2 class="text-lg font-bold text-stone-900 flex items-center gap-2">
+              <span class="w-2 h-5 bg-amber-500 rounded-full inline-block"></span> [1] 프롬프트 아틀리에
+            </h2>
+            <span class="text-xs bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full border border-amber-200 font-medium">영구 누적 생성 모드</span>
+          </div>
+
+          <!-- Style Selection -->
+          <div class="space-y-1.5 mb-4">
+            <label class="text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center justify-between">
+              <span class="flex items-center gap-1"><i class="fa-solid fa-paint-brush text-amber-600"></i> 화풍 / 예술 미술사 선택</span>
+              <span class="text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-semibold" id="style-feature-tag">먹선 & 한지 여백 특화</span>
+            </label>
+            <select id="style-select" onchange="onStyleChanged()" class="w-full bg-stone-50 border border-stone-300 text-stone-800 text-sm font-semibold rounded-xl p-3 focus:ring-2 focus:ring-amber-500 transition-all">
+              <option value="Korean Ink Wash Painting" selected>한국 수묵화 (Korean Ink Wash Art — 먹의 농담과 여백)</option>
+              <option value="Pixel Art">픽셀 아트 (Pixel Art 16-bit — 레트로 도트 그래픽)</option>
+              <option value="Impressionism">인상파 (Impressionism — 모네 스타일의 빛과 색채)</option>
+              <option value="Cyberpunk">사이버펑크 (Cyberpunk — 네온 조명과 미래 도시)</option>
+              <option value="Renaissance">르네상스 (Renaissance — 극적인 명암 키아로스쿠로)</option>
+              <option value="Surrealism">초현실주의 (Surrealism — 달리의 몽환적 꿈의 세계)</option>
+              <option value="Cubism">입체주의 (Cubism — 피카소의 기하학 다각도 분할)</option>
+              <option value="Pop Art">팝아트 (Pop Art — 워홀의 강렬한 원색과 망점)</option>
+            </select>
+          </div>
+
+          <!-- Subject Input (Korean friendly) -->
+          <div class="space-y-1.5 mb-4">
+            <div class="flex justify-between items-center">
+              <label class="text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1">
+                <i class="fa-solid fa-pen-nib text-amber-600"></i> 주제 키워드 <span class="text-amber-600 font-semibold">(자유로운 한국어 입력)</span>
+              </label>
+              <span id="trans-indicator" class="text-[10px] text-stone-400 font-mono"><i class="fa-solid fa-language mr-1"></i>실시간 자동 변환</span>
+            </div>
+            <input type="text" id="subject-input" oninput="onSubjectInputChanged()" placeholder="예: 소나무 아래 호랑이, 양정원의 사색, 달밤의 매화" value="소나무 아래 호랑이" class="w-full bg-stone-50 border border-stone-300 text-stone-800 text-sm rounded-xl p-3 focus:ring-2 focus:ring-amber-500 transition-all font-medium">
+            
+            <div class="flex flex-wrap gap-1.5 mt-2">
+              <button type="button" onclick="setSubject('소나무 아래 호랑이')" class="text-xs bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-md border border-stone-200 transition">+ 소나무와 호랑이</button>
+              <button type="button" onclick="setSubject('달밤의 매화와 두루미')" class="text-xs bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-md border border-stone-200 transition">+ 달밤의 매화</button>
+              <button type="button" onclick="setSubject('안개 낀 지리산 계곡')" class="text-xs bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-md border border-stone-200 transition">+ 지리산 계곡</button>
+              <button type="button" onclick="setSubject('양정원의 사색')" class="text-xs bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-md border border-stone-200 transition">+ 양정원의 사색</button>
+            </div>
+          </div>
+
+          <!-- Mood Selection Tags -->
+          <div class="space-y-1.5 mb-4">
+            <label class="text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-sun text-amber-600"></i> 조명 및 분위기 연출 태그
+            </label>
+            <div class="flex flex-wrap gap-1.5" id="mood-tags-container"></div>
+          </div>
+        </div>
+
+        <!-- Prompt Preview & Generation Button -->
+        <div class="pt-3 border-t border-stone-100 space-y-3">
+          <div class="bg-stone-900 rounded-xl p-3.5 text-stone-200 relative group">
+            <div class="flex justify-between items-center mb-1.5">
+              <span class="text-[11px] font-mono text-amber-400 font-bold flex items-center gap-1">
+                <i class="fa-solid fa-code"></i> AI ENHANCED PROMPT (화풍 특화 영문 변환)
+              </span>
+              <button type="button" onclick="copyPromptText()" class="text-[11px] text-stone-400 hover:text-amber-400 transition">
+                <i class="fa-regular fa-copy mr-1"></i>복사
+              </button>
+            </div>
+            <p id="prompt-preview" class="text-xs font-mono leading-relaxed text-stone-300 break-words min-h-[50px]">
+              생성 대기 중...
+            </p>
+          </div>
+
+          <button id="generate-btn" onclick="generateArt()" class="w-full bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-amber-500/25 transition transform active:scale-95 flex items-center justify-center gap-2">
+            <i id="btn-icon" class="fa-solid fa-plus-circle text-lg"></i>
+            <span id="btn-text">새 작품 생성하여 도면 전시장 벽면에 추가</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 2D Gallery Preview -->
+      <section class="lg:col-span-7 bg-white p-6 rounded-2xl border border-stone-200 shadow-xl shadow-stone-200/50 flex flex-col">
+        <div class="flex justify-between items-center pb-4 border-b border-stone-100 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-stone-900 flex items-center gap-2">
+              <span class="w-2 h-5 bg-stone-900 rounded-full inline-block"></span> [2] 누적 아카이브 프리뷰
+            </h2>
+            <p class="text-xs text-stone-500">생성된 모든 작품이 영구 보관됩니다. (클릭 시 AI 도슨트 감상)</p>
+          </div>
+          <span id="art-counter" class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full font-bold">누적 0개 전시 중</span>
+        </div>
+
+        <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 overflow-y-auto max-h-[580px] p-1"></div>
+      </section>
+    </div>
+
+    <!-- SECTION 2: 3D METAVERSE ARCHITECTURAL ROTUNDA -->
+    <div id="view-gallery" class="hidden space-y-4">
+      <!-- 3D Header & Controls -->
+      <div class="bg-stone-900 text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-3 shadow-lg">
+        <div>
+          <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+            <i class="fa-solid fa-archway text-red-500"></i> 도면 기반 이중 원형 전시장 (Double Ring Rotunda)
+          </h2>
+          <p class="text-xs text-stone-300 mt-0.5">
+            <span class="text-amber-300 font-semibold"><i class="fa-solid fa-arrows-spin mr-1"></i>화면 드래그: 중앙에서 360도 둘러보기</span> | 
+            <span class="text-amber-300 font-semibold"><i class="fa-solid fa-arrows-up-down mr-1"></i>마우스 휠: 층간 수직 엘리베이터 이동</span>
+          </p>
+        </div>
+
+        <!-- Floor & Camera Nav -->
+        <div class="flex items-center space-x-2">
+          <div class="bg-stone-800 border border-stone-700 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs">
+            <span class="text-stone-400">관람자 위치:</span>
+            <span id="current-floor-badge" class="font-bold text-amber-400">1층 관람대</span>
+            <span id="total-floors-badge" class="text-stone-500 text-[11px]">(총 1층 전시관)</span>
+          </div>
+          <button onclick="moveFloor(1)" class="px-2.5 py-1.5 bg-stone-800 hover:bg-stone-700 text-xs rounded-lg border border-stone-700 text-stone-200 transition flex items-center gap-1" title="위층으로 이동">
+            <i class="fa-solid fa-arrow-up"></i> 위층
+          </button>
+          <button onclick="moveFloor(-1)" class="px-2.5 py-1.5 bg-stone-800 hover:bg-stone-700 text-xs rounded-lg border border-stone-700 text-stone-200 transition flex items-center gap-1" title="아래층으로 이동">
+            <i class="fa-solid fa-arrow-down"></i> 아래층
+          </button>
+          <button onclick="reset3DCamera()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-xs font-semibold rounded-lg text-white transition">
+            <i class="fa-solid fa-compass mr-1"></i>정면 시점
+          </button>
+        </div>
+      </div>
+
+      <!-- 3D Canvas Viewport -->
+      <div id="viewport-container" class="h-[640px] bg-stone-950 rounded-2xl border-4 border-stone-800 shadow-2xl cursor-grab active:cursor-grabbing select-none relative overflow-hidden">
+        
+        <!-- Three.js Canvas mounts here -->
+        <div id="three-canvas-container" class="w-full h-full"></div>
+
+        <!-- 건축 도면 정보 HUD -->
+        <div class="absolute top-4 left-4 bg-black/80 backdrop-blur-md px-3.5 py-2.5 rounded-xl text-xs text-stone-300 border border-white/10 pointer-events-none space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+            <span class="font-bold text-red-400">외벽 (Red Wall Ring)</span>
+            <span class="text-stone-500">|</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-stone-500"></span>
+            <span class="font-bold text-stone-300">내벽 (Dark Wall Ring)</span>
+          </div>
+          <div class="text-[11px] text-amber-300 font-mono" id="hud-yaw-display">
+            시선 방향: 0° (정면 개구부)
+          </div>
+          <div class="text-[10px] text-stone-400">
+            * 3D 액자를 직접 클릭하면 도슨트 상세 해설이 열립니다.
+          </div>
+        </div>
+
+        <!-- 층간 엘리베이터 퀵 위젯 -->
+        <div class="absolute right-4 bottom-4 bg-stone-900/80 backdrop-blur-md p-2 rounded-xl border border-stone-700 flex flex-col items-center gap-1.5 shadow-xl">
+          <button onclick="moveFloor(1)" class="w-8 h-8 rounded-lg bg-stone-800 hover:bg-amber-600 text-stone-200 hover:text-white flex items-center justify-center transition">
+            <i class="fa-solid fa-chevron-up text-xs"></i>
+          </button>
+          <span id="quick-floor-indicator" class="text-[11px] font-bold text-amber-400 font-mono">1F</span>
+          <button onclick="moveFloor(-1)" class="w-8 h-8 rounded-lg bg-stone-800 hover:bg-amber-600 text-stone-200 hover:text-white flex items-center justify-center transition">
+            <i class="fa-solid fa-chevron-down text-xs"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: ETHICS & CONCEPT ACCORDION NOTE -->
+    <section class="bg-white rounded-2xl border border-stone-200 p-6 shadow-md space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-stone-100">
+        <div>
+          <h2 class="text-lg font-bold text-stone-900 flex items-center gap-2">
+            <i class="fa-solid fa-book-open text-amber-600"></i> 메타버스 & AI 윤리 노트 (학습 정리)
+          </h2>
+          <p class="text-xs text-stone-500">교과서 핵심 개념 퀴즈 3문항을 풀고 인공지능 시대의 미술 가치를 정립해 보세요.</p>
+        </div>
+        <span class="text-xs bg-stone-100 text-stone-600 px-3 py-1 rounded-full font-bold">미술창작 교과 평가</span>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Q1 -->
+        <div class="border border-stone-200 rounded-xl overflow-hidden transition">
+          <button onclick="toggleAccordion(1)" class="w-full bg-stone-50 hover:bg-amber-50/50 p-4 text-left flex justify-between items-center font-semibold text-sm text-stone-800">
+            <span class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center font-bold">Q1</span>
+              메타버스 가상 공간에서 AI 미술품이 갖는 미학적 의미는 무엇인가요?
+            </span>
+            <i id="acc-icon-1" class="fa-solid fa-chevron-down text-stone-400 transition-transform"></i>
+          </button>
+          <div id="acc-content-1" class="accordion-content bg-white px-5 py-0 text-xs text-stone-600 leading-relaxed border-t border-stone-100">
+            <p class="py-4">
+              <strong>[해설]</strong> 메타버스 공간에서 AI 작품은 전통적인 물리적 캔버스 한계를 넘어서 <strong>건축적 공간과 결합된 다차원적 수용자 참여 경험</strong>을 제공합니다. 이중 원형 벽면과 다층 누적 타워를 통해 시공간의 제약 없이 능동적으로 작품을 탐색합니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="border border-stone-200 rounded-xl overflow-hidden transition">
+          <button onclick="toggleAccordion(2)" class="w-full bg-stone-50 hover:bg-amber-50/50 p-4 text-left flex justify-between items-center font-semibold text-sm text-stone-800">
+            <span class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center font-bold">Q2</span>
+              생성형 AI 예술의 저작권(Copyright)과 독창성 이슈는 무엇인가요?
+            </span>
+            <i id="acc-icon-2" class="fa-solid fa-chevron-down text-stone-400 transition-transform"></i>
+          </button>
+          <div id="acc-content-2" class="accordion-content bg-white px-5 py-0 text-xs text-stone-600 leading-relaxed border-t border-stone-100">
+            <p class="py-4">
+              <strong>[해설]</strong> 생성형 AI는 기존 작가 데이터셋을 학습하므로 <strong>저작권 무단 도용 논란</strong>과 <strong>인간 작가의 독창성 인정 여부</strong>가 핵심 과제입니다. 프롬프트 기획에서 창작자의 미학적 개입과 비판적 사고가 중요합니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="border border-stone-200 rounded-xl overflow-hidden transition">
+          <button onclick="toggleAccordion(3)" class="w-full bg-stone-50 hover:bg-amber-50/50 p-4 text-left flex justify-between items-center font-semibold text-sm text-stone-800">
+            <span class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center font-bold">Q3</span>
+              좋은 AI 프롬프트를 구성하기 위해 창작자에게 필요한 비판적 사고방식은?
+            </span>
+            <i id="acc-icon-3" class="fa-solid fa-chevron-down text-stone-400 transition-transform"></i>
+          </button>
+          <div id="acc-content-3" class="accordion-content bg-white px-5 py-0 text-xs text-stone-600 leading-relaxed border-t border-stone-100">
+            <p class="py-4">
+              <strong>[해설]</strong> 단순 단어 입력을 넘어 <strong>미술사적 화풍, 조형 요소, 광원 및 구도</strong>를 정교하게 연출하는 비판적 디렉팅 사고가 필요합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: AI DOCENT ART DETAIL -->
+  <div id="docent-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl flex flex-col md:flex-row border border-amber-300/40">
+      
+      <div class="md:w-1/2 bg-stone-950 p-6 flex flex-col items-center justify-center relative min-h-[320px]">
+        <img id="modal-img" src="" alt="Artwork detail" class="max-h-[380px] w-auto object-contain rounded-lg frame-gold shadow-2xl">
+        <span id="modal-style-badge" class="absolute top-4 left-4 bg-amber-500 text-stone-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Style</span>
+        <span id="modal-location-badge" class="absolute bottom-4 left-4 bg-black/80 text-amber-300 text-[11px] font-mono px-2.5 py-1 rounded border border-amber-400/30">1층 전시장 벽면</span>
+      </div>
+
+      <div class="md:w-1/2 p-6 flex flex-col justify-between space-y-4">
+        <div>
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <span class="text-xs text-amber-600 font-bold uppercase tracking-wider">AI Curator Analysis</span>
+              <h3 id="modal-title" class="text-xl font-bold text-stone-900 serif-title">작품 제목</h3>
+            </div>
+            <button onclick="closeModal()" class="text-stone-400 hover:text-stone-700 text-xl font-bold px-2">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="bg-stone-50 rounded-lg p-3 text-xs text-stone-600 border border-stone-200 mb-4 font-mono">
+            <strong class="text-stone-900">적용된 화풍 특화 프롬프트:</strong>
+            <p id="modal-prompt" class="mt-1 text-stone-700 italic break-words">Prompt text...</p>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold text-stone-800 uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-feather-pointed text-amber-600"></i> 화풍 조형 분석 및 미학 비평
+            </h4>
+            <p id="modal-critique" class="text-xs text-stone-700 leading-relaxed bg-amber-50/50 p-3.5 rounded-xl border border-amber-200/60">
+              Docent text...
+            </p>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-stone-100 flex flex-col gap-2">
+          <button id="tts-btn" onclick="toggleDocentTTS()" class="w-full bg-stone-900 hover:bg-stone-800 text-white font-semibold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition">
+            <i id="tts-icon" class="fa-solid fa-volume-high text-amber-400"></i>
+            <span id="tts-btn-text">AI 도슨트 음성 해설 듣기</span>
+          </button>
+          <button onclick="closeModal()" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-700 py-2.5 rounded-xl text-xs font-semibold">닫기</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const moods = [
+      { id: 'mist', label: '자욱한 안개와 운무', prompt: 'dense ethereal misty fog, atmospheric poetic diffusion' },
+      { id: 'dawn', label: '새벽녘의 은은한 빛', prompt: 'soft dawn ambient glow, subtle monochromatic illumination' },
+      { id: 'night', label: '깊은 밤의 달빛', prompt: 'poetic midnight moonlight, deep shadows, reflective highlights' },
+      { id: 'sunlight', label: '드라마틱한 햇살', prompt: 'dramatic golden hour sun rays, volumetric sunlight' },
+      { id: 'cinematic', label: '시네마틱 구도', prompt: 'cinematic master composition, wide perspective, 8k resolution' }
+    ];
+
+    const hyperStylePrompts = {
+      'Korean Ink Wash Painting': 'Masterpiece authentic Korean Traditional Ink Wash Painting (수묵산수화, Joseon dynasty fine art style), calligraphic black ink brushstrokes, dynamic ink diffusion and wash gradation on aged Korean Hanji mulberry paper texture, wide poetic negative space (여백의 미), monochrome black and grey sumi-e ink, splash ink effects, no modern colorful paint, no western oil painting',
+      'Pixel Art': 'Authentic 16-bit retro arcade pixel art, crisp square pixel grid, vibrant nostalgic 90s video game graphics, clean pixel outlines, detailed isometric sprites, sharp dithering, pure digital pixel aesthetics',
+      'Impressionism': 'Classic Impressionist oil painting masterpiece, Claude Monet and Renoir style, heavy textured impasto oil brushstrokes, vibrant plein-air sunlight reflections, dappled broken colors, authentic canvas grain texture',
+      'Cyberpunk': 'Cyberpunk sci-fi aesthetic, neon-drenched futuristic Neo-Seoul, vibrant glowing magenta and cyan illumination, wet reflective asphalt streets, high-tech cybernetic holographic elements',
+      'Renaissance': 'High Renaissance master oil painting, Leonardo da Vinci and Caravaggio style, dramatic chiaroscuro contrast of light and shadow, classical anatomy, sfumato soft smoky transitions, museum cracked oil glaze',
+      'Surrealism': 'Surrealist oil painting, Salvador Dali and Magritte style, bizarre dreamscape, melting metaphysical objects, impossible floating architecture, uncanny mystery, hyperrealistic rendering of a dream',
+      'Cubism': 'Analytic Cubism masterpiece, Pablo Picasso style, deconstructed geometric facets, multi-angle overlapping perspective, fragmented angular planes, muted earth tones and sharp contour lines',
+      'Pop Art': 'Iconic Pop Art screenprint, Andy Warhol and Roy Lichtenstein aesthetic, bold Ben-Day halftone dot pattern, thick black graphic outlines, vibrant saturated primary colors, retro commercial silkscreen art'
+    };
+
+    const styleCuratedPools = {
+      'Korean Ink Wash Painting': [
+        'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1544717305-2782549b5136?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=700&auto=format&fit=crop&q=80'
+      ],
+      'Pixel Art': [
+        'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=700&auto=format&fit=crop&q=80'
+      ],
+      'Impressionism': [
+        'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1578926375605-eaf7559b1458?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?w=700&auto=format&fit=crop&q=80'
+      ],
+      'Cyberpunk': [
+        'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=700&auto=format&fit=crop&q=80'
+      ],
+      'Renaissance': [
+        'https://images.unsplash.com/photo-1579783901586-d88db74b4fe4?w=700&auto=format&fit=crop&q=80'
+      ],
+      'Surrealism': [
+        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop&q=80'
+      ],
+      'Cubism': [
+        'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=700&auto=format&fit=crop&q=80'
+      ],
+      'Pop Art': [
+        'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=700&auto=format&fit=crop&q=80'
+      ]
+    };
+
+    const localArtDictionary = {
+      '소나무': 'majestic Korean red pine tree',
+      '호랑이': 'fierce Korean mountain tiger',
+      '소나무 아래 호랑이': 'Korean tiger resting under ancient pine tree',
+      '소나무와 호랑이': 'ferocious tiger and pine tree',
+      '매화': 'blooming plum blossom branches',
+      '달밤의 매화': 'plum blossoms illuminated under the moon',
+      '달밤의 매화와 두루미': 'plum blossoms and white crane under full moon',
+      '두루미': 'elegant white crane bird',
+      '학': 'graceful flying red-crowned crane',
+      '양정원': 'portrait of Yang Jungwon, elegant posture and contemplative aura',
+      '양정원의 사색': 'portrait of Yang Jungwon deep in philosophical thought',
+      '소나무 아래에서 사색하는 사람': 'a contemplative scholar sitting peacefully under a pine tree',
+      '안개 낀 지리산 계곡': 'misty Jirisan mountain valley with flowing stream',
+      '경복궁': 'Gyeongbokgung royal palace pavilion',
+      '해질녘 경복궁': 'Gyeongbokgung palace with traditional tiled roofs at golden sunset'
+    };
+
+    let selectedMoods = ['mist', 'dawn'];
+    let galleryItems = [];
+    let currentModalItem = null;
+    let isPlayingTTS = false;
+    let isGenerating = false;
+    let currentEnglishSubject = 'Korean tiger resting under ancient pine tree';
+    let translateDebounceTimer = null;
+
+    // 도면 기준 건축 파라미터 (단위: 3D 유닛)
+    const INNER_RADIUS = 13;   // 내벽 반경
+    const OUTER_RADIUS = 23;   // 외벽 반경
+    const WALL_HEIGHT = 10;    // 도면 표기 '높이 3.3m' 비율
+    const FRAMES_PER_FLOOR = 8; // 한 층에 걸리는 액자 수
+
+    let currentFloor = 1;
+
+    // Three.js 글로벌 변수
+    let scene, camera, renderer;
+    let threeFramesGroup;
+    let interactiveMeshes = [];
+    let raycaster, mouse;
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+    let cameraYaw = 0;
+    let cameraPitch = 0;
+    let targetCameraY = 4.5;
+    let currentCameraY = 4.5;
+
+    function initializeApp() {
+      renderMoodTags();
+      onStyleChanged();
+      seedInitialGallery();
+      initThreeScene();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+      initializeApp();
+    }
+
+    function renderMoodTags() {
+      const container = document.getElementById('mood-tags-container');
+      if (!container) return;
+      container.innerHTML = moods.map(mood => {
+        const active = selectedMoods.includes(mood.id);
+        return `
+          <button type="button" onclick="toggleMood('${mood.id}')" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+            active 
+              ? 'bg-amber-500 text-white border-amber-600 shadow-sm' 
+              : 'bg-stone-50 text-stone-600 border-stone-200 hover:bg-stone-100'
+          }">
+            <i class="fa-solid ${active ? 'fa-check-circle' : 'fa-circle'} text-[10px] mr-1"></i>${mood.label}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleMood(moodId) {
+      if (selectedMoods.includes(moodId)) {
+        selectedMoods = selectedMoods.filter(id => id !== moodId);
+      } else {
+        selectedMoods.push(moodId);
+      }
+      renderMoodTags();
+      updatePromptPreview();
+    }
+
+    function onStyleChanged() {
+      const styleSelect = document.getElementById('style-select');
+      const tag = document.getElementById('style-feature-tag');
+      const featureMap = {
+        'Korean Ink Wash Painting': '먹선 & 한지 여백 특화',
+        'Pixel Art': '16비트 도트 그리드 특화',
+        'Impressionism': '모네식 유화 질감과 빛 특화',
+        'Cyberpunk': '네온 광원 & 미래 도시 특화',
+        'Renaissance': '극적 명암 키아로스쿠로 특화',
+        'Surrealism': '달리식 무의식 꿈 특화',
+        'Cubism': '피카소식 기하학 분할 특화',
+        'Pop Art': '워홀식 망점 & 실크스크린 특화'
+      };
+      tag.innerText = featureMap[styleSelect.value] || '조형 요소 특화';
+      updatePromptPreview();
+    }
+
+    function setSubject(text) {
+      document.getElementById('subject-input').value = text;
+      onSubjectInputChanged();
+    }
+
+    function onSubjectInputChanged() {
+      const rawText = document.getElementById('subject-input').value.trim();
+      const indicator = document.getElementById('trans-indicator');
+
+      if (!rawText) {
+        currentEnglishSubject = 'aesthetic traditional scene';
+        updatePromptPreview();
+        return;
+      }
+
+      if (localArtDictionary[rawText]) {
+        currentEnglishSubject = localArtDictionary[rawText];
+        indicator.innerHTML = `<i class="fa-solid fa-check text-green-500 mr-1"></i>즉시 번역 완료`;
+        updatePromptPreview();
+        return;
+      }
+
+      if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(rawText)) {
+        indicator.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-amber-500 mr-1"></i>한국어 변환 중...`;
+        clearTimeout(translateDebounceTimer);
+        translateDebounceTimer = setTimeout(() => {
+          fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(rawText)}&langpair=ko|en`)
+            .then(res => res.json())
+            .then(data => {
+              if (data && data.responseData && data.responseData.translatedText) {
+                currentEnglishSubject = data.responseData.translatedText;
+                indicator.innerHTML = `<i class="fa-solid fa-check text-green-500 mr-1"></i>변환 완료: ${currentEnglishSubject}`;
+              } else {
+                currentEnglishSubject = `artistic visualization of ${rawText}`;
+                indicator.innerHTML = `<i class="fa-solid fa-language mr-1"></i>자동 변환`;
+              }
+              updatePromptPreview();
+            })
+            .catch(() => {
+              currentEnglishSubject = `artistic portrayal of ${rawText}`;
+              indicator.innerHTML = `<i class="fa-solid fa-language mr-1"></i>기본 번역`;
+              updatePromptPreview();
+            });
+        }, 300);
+      } else {
+        currentEnglishSubject = rawText;
+        indicator.innerHTML = `<i class="fa-solid fa-language mr-1"></i>영문 입력`;
+        updatePromptPreview();
+      }
+    }
+
+    function getCombinedPrompt() {
+      const styleSelect = document.getElementById('style-select');
+      const styleKey = styleSelect ? styleSelect.value : 'Korean Ink Wash Painting';
+      const styleRule = hyperStylePrompts[styleKey] || styleKey;
+      
+      const moodTexts = selectedMoods
+        .map(id => moods.find(m => m.id === id)?.prompt)
+        .filter(Boolean)
+        .join(', ');
+
+      return `${styleRule}, subject: ${currentEnglishSubject}, mood: ${moodTexts}, masterpiece quality, highly defined aesthetic`;
+    }
+
+    function updatePromptPreview() {
+      const preview = document.getElementById('prompt-preview');
+      if (preview) {
+        preview.innerText = getCombinedPrompt();
+      }
+    }
+
+    function copyPromptText() {
+      const prompt = getCombinedPrompt();
+      navigator.clipboard.writeText(prompt);
+      alert('화풍 특화 영문 프롬프트가 복사되었습니다.');
+    }
+
+    function generateAestheticCritique(style, subject) {
+      const critiques = {
+        'Korean Ink Wash Painting': `이 작품은 한국 전통 수묵화의 정수인 '기운생동(氣韻生動)'과 '여백의 미'를 극명하게 보여줍니다. 먹의 농담(진함과 옅음) 번짐 효과를 통해 '${subject}'의 형상을 화선지 위에 서정적으로 녹여냈으며, 채색을 걷어내고 흑백의 농묵과 담묵만으로 동양 미학적 절제미를 구현했습니다.`,
+        'Pixel Art': `16비트 레트로 아케이드 게임의 도트 매트릭스 그리드로 구축된 작품입니다. 픽셀이라는 최소 조형 단위를 명확한 윤곽선과 디더링 음영 기법으로 연출하여 80~90년대 사이버 감성을 '${subject}' 주제에 성공적으로 부여했습니다.`,
+        'Impressionism': `클로드 모네의 인상주의 양식을 계승한 작품입니다. 대상을 정밀하게 윤곽 짓는 대신, 야외 광선 아래에서 사물이 뿜어내는 '순간의 빛과 색채'를 거친 유화 붓터치로 화폭 위에 진동하듯 포착했습니다.`,
+        'Cyberpunk': `강렬한 네온 마젠타와 시안 블루 광선이 지배하는 사이버펑크 디스토피아 미학을 구현했습니다. 어둠과 찬란한 인공 불빛의 대비를 통해 미래 메타버스 세계 속 '${subject}'의 시각적 긴장감을 표현합니다.`,
+        'Renaissance': `명암의 극적 대비인 '키아로스쿠로(Chiaroscuro)'와 부드러운 경계선 처리인 '스푸마토(Sfumato)' 기법이 압도적인 고전 명작입니다. 해부학적 균형과 엄격한 비례미를 통해 르네상스 인문주의 예술의 숭고함을 재현했습니다.`,
+        'Surrealism': `살바도르 달리의 무의식 세계관처럼 현실의 시공간 물리 법칙을 기묘하게 해체한 초현실주의 작품입니다. '${subject}' 주제를 낯설게 배치하여 꿈속을 유영하는 듯한 무한한 상상력을 선사합니다.`
+      };
+      return critiques[style] || `본 작품은 '${style}' 양식의 핵심 조형 언어와 '${subject}' 주제를 성공적으로 융합한 미학적 작품입니다.`;
+    }
+
+    function generateProceduralArtDataUrl(style, subject, seed) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 600;
+      canvas.height = 600;
+      const ctx = canvas.getContext('2d');
+
+      const rng = (s) => {
+        let x = Math.sin(s++) * 10000;
+        return x - Math.floor(x);
+      };
+
+      if (style === 'Korean Ink Wash Painting') {
+        ctx.fillStyle = '#f3efe6';
+        ctx.fillRect(0, 0, 600, 600);
+
+        ctx.fillStyle = 'rgba(0,0,0,0.02)';
+        for (let i = 0; i < 400; i++) {
+          ctx.fillRect(rng(seed + i) * 600, rng(seed + i * 2) * 600, 2, 2);
+        }
+
+        ctx.fillStyle = 'rgba(40, 40, 40, 0.15)';
+        ctx.beginPath();
+        ctx.moveTo(0, 400);
+        for (let x = 0; x <= 600; x += 30) {
+          ctx.lineTo(x, 260 + Math.sin(x * 0.01 + seed) * 90 + rng(seed + x) * 20);
+        }
+        ctx.lineTo(600, 600);
+        ctx.lineTo(0, 600);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(20, 20, 20, 0.45)';
+        ctx.beginPath();
+        ctx.moveTo(0, 480);
+        for (let x = 0; x <= 600; x += 25) {
+          ctx.lineTo(x, 380 + Math.cos(x * 0.015 + seed) * 80 + rng(seed * 2 + x) * 30);
+        }
+        ctx.lineTo(600, 600);
+        ctx.lineTo(0, 600);
+        ctx.fill();
+
+        ctx.strokeStyle = '#111111';
+        ctx.lineWidth = 6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        let px = 150 + rng(seed) * 100;
+        let py = 450;
+        ctx.moveTo(px, py);
+        for (let j = 0; j < 6; j++) {
+          px += (rng(seed + j) - 0.4) * 50;
+          py -= 30 + rng(seed + j * 3) * 20;
+          ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        ctx.fillStyle = '#b91c1c';
+        ctx.fillRect(520, 50, 45, 45);
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(524, 54, 37, 37);
+
+      } else if (style === 'Pixel Art') {
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, 600, 600);
+        const palette = ['#f43f5e', '#8b5cf6', '#06b6d4', '#10b981', '#fbbf24', '#3b82f6'];
+        const size = 25;
+        for (let x = 0; x < 600; x += size) {
+          for (let y = 0; y < 600; y += size) {
+            const v = rng(seed + x * 10 + y);
+            if (v > 0.4) {
+              ctx.fillStyle = palette[Math.floor(v * palette.length)];
+              ctx.fillRect(x, y, size - 1, size - 1);
+            }
+          }
+        }
+      } else if (style === 'Impressionism') {
+        ctx.fillStyle = '#064e3b';
+        ctx.fillRect(0, 0, 600, 600);
+        const colors = ['#047857', '#10b981', '#34d399', '#6ee7b7', '#f472b6', '#fbbf24', '#38bdf8'];
+        for (let i = 0; i < 500; i++) {
+          const x = rng(seed + i) * 600;
+          const y = rng(seed + i * 2) * 600;
+          const w = 20 + rng(seed + i * 3) * 40;
+          const h = 8 + rng(seed + i * 4) * 15;
+          ctx.fillStyle = colors[Math.floor(rng(seed + i * 5) * colors.length)];
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate((rng(seed + i) - 0.5) * 0.8);
+          ctx.fillRect(-w/2, -h/2, w, h);
+          ctx.restore();
+        }
+      } else {
+        const grad = ctx.createLinearGradient(0, 0, 600, 600);
+        grad.addColorStop(0, '#0284c7');
+        grad.addColorStop(0.5, '#7c3aed');
+        grad.addColorStop(1, '#05050f');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 600, 600);
+      }
+
+      ctx.fillStyle = style === 'Korean Ink Wash Painting' ? 'rgba(30,30,30,0.85)' : 'rgba(255,255,255,0.85)';
+      ctx.font = 'bold 18px "Noto Serif KR", serif';
+      ctx.fillText(subject, 30, 560);
+
+      return canvas.toDataURL('image/png');
+    }
+
+    function getArtImageUrlForStyle(style, subject, seed) {
+      const pool = styleCuratedPools[style];
+      if (pool && pool.length > 0) {
+        const idx = Math.abs(seed) % pool.length;
+        return pool[idx];
+      }
+      return generateProceduralArtDataUrl(style, subject, seed);
+    }
+
+    function seedInitialGallery() {
+      const initialConfigs = [
+        { style: 'Korean Ink Wash Painting', subject: '소나무와 운무 (수묵산수)' },
+        { style: 'Pixel Art', subject: '16비트 레트로 메타버스' },
+        { style: 'Impressionism', subject: '빛과 색채의 수련 연못' },
+        { style: 'Cyberpunk', subject: '네오 서울의 사이버 스트리트' },
+        { style: 'Korean Ink Wash Painting', subject: '먹선의 대나무와 참새' },
+        { style: 'Renaissance', subject: '명암의 고전 인물 초상' },
+        { style: 'Surrealism', subject: '초현실의 은하와 고래' },
+        { style: 'Pop Art', subject: '네온 팝아트 실크스크린' },
+        { style: 'Korean Ink Wash Painting', subject: '달밤의 매화와 두루미' },
+        { style: 'Pixel Art', subject: '사이버펑크 픽셀 골목' }
+      ];
+
+      galleryItems = initialConfigs.map((item, idx) => {
+        const seed = 1000 + idx * 77;
+        const img = getArtImageUrlForStyle(item.style, item.subject, seed);
+        return {
+          id: Date.now() + idx,
+          style: item.style,
+          subject: item.subject,
+          prompt: `${hyperStylePrompts[item.style]}, subject: ${item.subject}`,
+          imageUrl: img,
+          critique: generateAestheticCritique(item.style, item.subject),
+          isLoading: false
+        };
+      });
+
+      renderAllGalleries();
+    }
+
+    function generateArt() {
+      if (isGenerating) return;
+      isGenerating = true;
+
+      const styleKey = document.getElementById('style-select').value;
+      const subject = document.getElementById('subject-input').value.trim() || '화풍 창작';
+      const prompt = getCombinedPrompt();
+      const currentSeed = Math.floor(Math.random() * 900000) + 100000;
+
+      const btnText = document.getElementById('btn-text');
+      const btnIcon = document.getElementById('btn-icon');
+      btnText.innerText = "도면 전시장 벽면에 증축 렌더링 중...";
+      btnIcon.className = "fa-solid fa-spinner fa-spin text-lg";
+
+      const newItem = {
+        id: Date.now(),
+        style: styleKey,
+        subject: subject,
+        prompt: prompt,
+        imageUrl: '',
+        critique: generateAestheticCritique(styleKey, subject),
+        isLoading: true
+      };
+
+      galleryItems.push(newItem);
+      renderAllGalleries();
+
+      const targetFloor = Math.floor((galleryItems.length - 1) / FRAMES_PER_FLOOR) + 1;
+      setFloor(targetFloor);
+
+      const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=turbo&seed=${currentSeed}&width=600&height=600&nologo=true`;
+      const testImg = new Image();
+      testImg.src = pollUrl;
+
+      const completeArt = (finalSrc) => {
+        newItem.imageUrl = finalSrc;
+        newItem.isLoading = false;
+        renderAllGalleries();
+        isGenerating = false;
+        btnText.innerText = "새 작품 생성하여 도면 전시장 벽면에 추가";
+        btnIcon.className = "fa-solid fa-plus-circle text-lg";
+      };
+
+      testImg.onload = () => completeArt(pollUrl);
+      testImg.onerror = () => {
+        const proceduralArt = generateProceduralArtDataUrl(styleKey, subject, currentSeed);
+        completeArt(proceduralArt);
+      };
+
+      setTimeout(() => {
+        if (newItem.isLoading) {
+          const fallbackArt = generateProceduralArtDataUrl(styleKey, subject, currentSeed);
+          completeArt(fallbackArt);
+        }
+      }, 4500);
+    }
+
+    function handleFrameImageError(imgEl, itemId) {
+      const item = galleryItems.find(i => i.id === itemId);
+      if (!item) return;
+      imgEl.onerror = null;
+      const safeArt = generateProceduralArtDataUrl(item.style, item.subject, itemId);
+      item.imageUrl = safeArt;
+      imgEl.src = safeArt;
+    }
+
+    function renderAllGalleries() {
+      render2DGallery();
+      rebuildThreeGallery();
+      updateFloorUI();
+    }
+
+    function render2DGallery() {
+      const grid = document.getElementById('gallery-grid');
+      const counter = document.getElementById('art-counter');
+      if (!grid) return;
+
+      const totalFloors = Math.ceil(galleryItems.length / FRAMES_PER_FLOOR) || 1;
+      counter.innerText = `누적 ${galleryItems.length}개 작품 전시 중 (총 ${totalFloors}층 타워)`;
+
+      const reversed = [...galleryItems].reverse();
+
+      grid.innerHTML = reversed.map(item => {
+        const originalIndex = galleryItems.findIndex(i => i.id === item.id);
+        const floor = Math.floor(originalIndex / FRAMES_PER_FLOOR) + 1;
+        const slot = (originalIndex % FRAMES_PER_FLOOR) + 1;
+
+        if (item.isLoading) {
+          return `
+            <div class="relative bg-stone-900 rounded-xl overflow-hidden frame-gold aspect-square flex flex-col items-center justify-center p-4 text-center">
+              <i class="fa-solid fa-palette text-amber-400 text-3xl animate-bounce mb-2"></i>
+              <p class="text-xs font-bold text-amber-300">화풍 정밀 렌더링 중...</p>
+              <p class="text-[10px] text-stone-400 mt-1 truncate w-full">${item.subject}</p>
+            </div>
+          `;
+        }
+        return `
+          <div onclick="openModal(${item.id})" class="group relative bg-stone-900 rounded-xl overflow-hidden frame-gold cursor-pointer transform hover:-translate-y-1 transition duration-300 aspect-square">
+            <img src="${item.imageUrl}" alt="${item.subject}" 
+                 onerror="handleFrameImageError(this, ${item.id})"
+                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-end">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] bg-amber-500 text-black font-bold px-1.5 py-0.5 rounded uppercase">${item.style}</span>
+                <span class="text-[9px] bg-stone-800 text-amber-300 px-1.5 py-0.5 rounded font-mono">${floor}F #${slot}</span>
+              </div>
+              <h4 class="text-xs font-bold text-white mt-1 truncate">${item.subject}</h4>
+              <p class="text-[10px] text-amber-300 flex items-center gap-1 mt-1 font-medium">
+                <i class="fa-solid fa-magnifying-glass-plus text-amber-400"></i> 클릭하여 도슨트 감상
+              </p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==========================================
+    // Three.js 도면 기반 이중 원형 전시장 구현
+    // ==========================================
+    function createFloorBlueprintTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+
+      // 밝은 도면 베이스 배경
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, 1024, 1024);
+
+      // 건축 그리드
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 1024; i += 32) {
+        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 1024); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(1024, i); ctx.stroke();
+      }
+
+      ctx.save();
+      ctx.translate(512, 512);
+
+      // 동심원 도면 가이드라인
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.arc(0, 0, 240, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, 0, 420, 0, Math.PI * 2); ctx.stroke();
+
+      // 보조 점선 원
+      ctx.setLineDash([8, 8]);
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(0, 0, 180, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, 0, 330, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, 0, 470, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 도면 치수 화살표선
+      ctx.strokeStyle = '#475569';
+      ctx.beginPath();
+      ctx.moveTo(-180, 0); ctx.lineTo(180, 0);
+      ctx.moveTo(0, -330); ctx.lineTo(0, 330);
+      ctx.stroke();
+
+      // 한글 도면 주석 텍스트 (첨부 도면과 동일)
+      ctx.fillStyle = '#1e293b';
+      ctx.font = 'bold 22px "Noto Serif KR", serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('원 형 전 시 장', 0, 40);
+
+      ctx.font = 'bold 18px "Pretendard", sans-serif';
+      ctx.fillStyle = '#0f172a';
+      ctx.fillText('(높이 3.3m)', 0, 75);
+
+      ctx.font = '14px monospace';
+      ctx.fillStyle = '#64748b';
+      ctx.fillText('R = 4380.1mm / 3965.9mm', 0, 110);
+
+      ctx.font = 'bold 24px "Noto Serif KR", serif';
+      ctx.fillText('제 1 전 시 장 (4.15m)', -360, 440);
+      ctx.fillText('제 2 전 시 장', 360, 440);
+      ctx.fillText('공 연 기 획 실', -340, -420);
+      ctx.fillText('수 장 고', 340, -420);
+
+      ctx.restore();
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    function initThreeScene() {
+      const container = document.getElementById('three-canvas-container');
+      if (!container) return;
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0c0a09); // 차콜 블랙 배경
+      scene.fog = new THREE.FogExp2(0x0c0a09, 0.015);
+
+      camera = new THREE.PerspectiveCamera(65, container.clientWidth / container.clientHeight, 0.1, 500);
+      camera.position.set(0, currentCameraY, 0); // 관람자가 중앙에 서 있음
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      // 조명 연출
+      const ambientLight = new THREE.AmbientLight(0xfffbeb, 0.65);
+      scene.add(ambientLight);
+
+      const centerLight = new THREE.PointLight(0xffedd5, 1.2, 80);
+      centerLight.position.set(0, 15, 0);
+      centerLight.castShadow = true;
+      scene.add(centerLight);
+
+      // 도면 바닥 메쉬
+      const floorGeo = new THREE.PlaneGeometry(100, 100);
+      const floorMat = new THREE.MeshStandardMaterial({
+        map: createFloorBlueprintTexture(),
+        roughness: 0.6,
+        metalness: 0.1
+      });
+      const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+      floorMesh.rotation.x = -Math.PI / 2;
+      floorMesh.position.y = 0;
+      floorMesh.receiveShadow = true;
+      scene.add(floorMesh);
+
+      // 액자 및 벽체 그룹
+      threeFramesGroup = new THREE.Group();
+      scene.add(threeFramesGroup);
+
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+
+      setupThreeControls(container);
+      rebuildThreeGallery();
+
+      window.addEventListener('resize', onWindowResize);
+      animateThree();
+    }
+
+    // 도면 구조 벽체 및 액자 빌더
+    function rebuildThreeGallery() {
+      if (!threeFramesGroup) return;
+
+      // 이전 메쉬 정리
+      while (threeFramesGroup.children.length > 0) {
+        const obj = threeFramesGroup.children[0];
+        threeFramesGroup.remove(obj);
+      }
+      interactiveMeshes = [];
+
+      const totalFloors = Math.ceil(galleryItems.length / FRAMES_PER_FLOOR) || 1;
+
+      // 재질 생성 (설계도 반영: 외벽 레드, 내벽 다크 차콜, 상단 화이트 캡)
+      const redWallMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.45, metalness: 0.1 });
+      const darkWallMat = new THREE.MeshStandardMaterial({ color: 0x292524, roughness: 0.6, metalness: 0.2 });
+      const capMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3 });
+      const goldFrameMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.3, metalness: 0.7 });
+
+      // 층별 벽체 빌드
+      for (let f = 0; f < totalFloors; f++) {
+        const floorBaseY = f * WALL_HEIGHT;
+
+        // 1. 내벽 (Inner Wall Ring - 다각형 세그먼트, 전면 입구 개구부 있음)
+        const innerSegments = 8;
+        const innerStep = (Math.PI * 2) / innerSegments;
+        for (let i = 0; i < innerSegments; i++) {
+          if (i === 0) continue; // 정면 입구 통로 뚫림
+          const angle = i * innerStep;
+          const segWidth = 2 * INNER_RADIUS * Math.sin(innerStep / 2) * 1.05;
+
+          // 내벽 본체
+          const wallGeo = new THREE.BoxGeometry(segWidth, WALL_HEIGHT, 1.0);
+          const wallMesh = new THREE.Mesh(wallGeo, darkWallMat);
+          wallMesh.position.set(
+            Math.sin(angle) * INNER_RADIUS,
+            floorBaseY + WALL_HEIGHT / 2,
+            Math.cos(angle) * INNER_RADIUS
+          );
+          wallMesh.rotation.y = angle + Math.PI;
+          wallMesh.castShadow = true;
+          wallMesh.receiveShadow = true;
+          threeFramesGroup.add(wallMesh);
+
+          // 상단 화이트 캡 (도면과 동일)
+          const capGeo = new THREE.BoxGeometry(segWidth, 0.4, 1.4);
+          const capMesh = new THREE.Mesh(capGeo, capMat);
+          capMesh.position.set(
+            Math.sin(angle) * INNER_RADIUS,
+            floorBaseY + WALL_HEIGHT + 0.2,
+            Math.cos(angle) * INNER_RADIUS
+          );
+          capMesh.rotation.y = angle + Math.PI;
+          threeFramesGroup.add(capMesh);
+        }
+
+        // 2. 외벽 (Outer Wall Ring - 레드 컬러, 전면 넓은 입구 개구부)
+        const outerSegments = 10;
+        const outerStep = (Math.PI * 2) / outerSegments;
+        for (let i = 0; i < outerSegments; i++) {
+          if (i === 0 || i === outerSegments - 1) continue; // 전면 진입로 개방
+          const angle = i * outerStep;
+          const segWidth = 2 * OUTER_RADIUS * Math.sin(outerStep / 2) * 1.05;
+
+          // 외벽 본체 (선명한 레드)
+          const wallGeo = new THREE.BoxGeometry(segWidth, WALL_HEIGHT, 1.2);
+          const wallMesh = new THREE.Mesh(wallGeo, redWallMat);
+          wallMesh.position.set(
+            Math.sin(angle) * OUTER_RADIUS,
+            floorBaseY + WALL_HEIGHT / 2,
+            Math.cos(angle) * OUTER_RADIUS
+          );
+          wallMesh.rotation.y = angle + Math.PI;
+          wallMesh.castShadow = true;
+          wallMesh.receiveShadow = true;
+          threeFramesGroup.add(wallMesh);
+
+          // 상단 화이트 캡 (도면과 동일)
+          const capGeo = new THREE.BoxGeometry(segWidth, 0.4, 1.6);
+          const capMesh = new THREE.Mesh(capGeo, capMat);
+          capMesh.position.set(
+            Math.sin(angle) * OUTER_RADIUS,
+            floorBaseY + WALL_HEIGHT + 0.2,
+            Math.cos(angle) * OUTER_RADIUS
+          );
+          capMesh.rotation.y = angle + Math.PI;
+          threeFramesGroup.add(capMesh);
+        }
+      }
+
+      // 3. 실제 작품 액자들 배치 (내벽 및 외벽 안쪽 벽면에 부착)
+      galleryItems.forEach((item, idx) => {
+        const floorIndex = Math.floor(idx / FRAMES_PER_FLOOR);
+        const slotInFloor = idx % FRAMES_PER_FLOOR;
+        const floorBaseY = floorIndex * WALL_HEIGHT;
+
+        let frameRadius, frameAngle;
+        if (slotInFloor < 4) {
+          // 내벽 안쪽 면에 4점 전시
+          frameRadius = INNER_RADIUS - 0.7;
+          frameAngle = (slotInFloor + 1.5) * ((Math.PI * 2) / 6);
+        } else {
+          // 외벽 안쪽 면에 4점 전시
+          frameRadius = OUTER_RADIUS - 0.8;
+          frameAngle = (slotInFloor - 3.5) * ((Math.PI * 2) / 8);
+        }
+
+        const posX = Math.sin(frameAngle) * frameRadius;
+        const posY = floorBaseY + WALL_HEIGHT * 0.48;
+        const posZ = Math.cos(frameAngle) * frameRadius;
+
+        // 텍스처 로더
+        const textureLoader = new THREE.TextureLoader();
+        const artTexture = textureLoader.load(item.imageUrl || generateProceduralArtDataUrl(item.style, item.subject, item.id));
+
+        // 액자 틀 (Gold Frame)
+        const frameWidth = 4.2;
+        const frameHeight = 4.8;
+        const frameOuterMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(frameWidth, frameHeight, 0.3),
+          goldFrameMat
+        );
+        frameOuterMesh.position.set(posX, posY, posZ);
+        frameOuterMesh.lookAt(0, posY, 0); // 원 중심 관람자를 똑바로 바라봄
+        threeFramesGroup.add(frameOuterMesh);
+
+        // 그림 캔버스 메쉬
+        const artPlane = new THREE.Mesh(
+          new THREE.PlaneGeometry(frameWidth - 0.4, frameHeight - 0.4),
+          new THREE.MeshBasicMaterial({ map: artTexture })
+        );
+        artPlane.position.set(0, 0, 0.16);
+        frameOuterMesh.add(artPlane);
+
+        // 명패 (Title Plaque)
+        const plaqueCanvas = document.createElement('canvas');
+        plaqueCanvas.width = 256; plaqueCanvas.height = 64;
+        const pctx = plaqueCanvas.getContext('2d');
+        pctx.fillStyle = '#1c1917'; pctx.fillRect(0, 0, 256, 64);
+        pctx.strokeStyle = '#d4af37'; pctx.lineWidth = 4; pctx.strokeRect(2, 2, 252, 60);
+        pctx.fillStyle = '#fbbf24'; pctx.font = 'bold 20px "Noto Serif KR", sans-serif';
+        pctx.textAlign = 'center'; pctx.fillText(item.subject, 128, 38);
+
+        const plaqueMesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(3.0, 0.75),
+          new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(plaqueCanvas) })
+        );
+        plaqueMesh.position.set(0, -frameHeight / 2 - 0.5, 0.16);
+        frameOuterMesh.add(plaqueMesh);
+
+        // 클릭 이벤트 연결
+        frameOuterMesh.userData = { artItem: item };
+        artPlane.userData = { artItem: item };
+        interactiveMeshes.push(frameOuterMesh, artPlane);
+      });
+    }
+
+    function setupThreeControls(container) {
+      container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        // 호버 레이캐스팅 (커서 손가락 모양 변경)
+        const rect = container.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(interactiveMeshes);
+        container.style.cursor = intersects.length > 0 ? 'pointer' : (isDragging ? 'grabbing' : 'grab');
+
+        if (!isDragging) return;
+        const deltaX = e.clientX - previousMousePosition.x;
+        const deltaY = e.clientY - previousMousePosition.y;
+
+        cameraYaw -= deltaX * 0.005;
+        cameraPitch -= deltaY * 0.0035;
+        cameraPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, cameraPitch));
+
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+        updateHudYaw();
+      });
+
+      window.addEventListener('mouseup', () => isDragging = false);
+
+      // 액자 클릭 시 모달 열기
+      container.addEventListener('click', (e) => {
+        const rect = container.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(interactiveMeshes);
+        if (intersects.length > 0) {
+          const clickedItem = intersects[0].object.userData.artItem;
+          if (clickedItem) openModal(clickedItem.id);
+        }
+      });
+
+      // 마우스 휠 스크롤로 층간 수직 이동
+      container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (e.deltaY < 0) moveFloor(1);
+        else if (e.deltaY > 0) moveFloor(-1);
+      }, { passive: false });
+
+      // 모바일 터치 제어
+      container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+      });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        const deltaX = e.touches[0].clientX - previousMousePosition.x;
+        const deltaY = e.touches[0].clientY - previousMousePosition.y;
+
+        cameraYaw -= deltaX * 0.006;
+        cameraPitch -= deltaY * 0.004;
+        cameraPitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, cameraPitch));
+
+        previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        updateHudYaw();
+      });
+
+      window.addEventListener('touchend', () => isDragging = false);
+    }
+
+    function animateThree() {
+      requestAnimationFrame(animateThree);
+
+      // 엘리베이터 부드러운 카메라 Y축 이동
+      currentCameraY += (targetCameraY - currentCameraY) * 0.08;
+      camera.position.set(0, currentCameraY, 0);
+
+      // 관람자 중심 360도 시선 방향 계산
+      const targetX = Math.sin(cameraYaw) * Math.cos(cameraPitch);
+      const targetY = Math.sin(cameraPitch);
+      const targetZ = Math.cos(cameraYaw) * Math.cos(cameraPitch);
+
+      camera.lookAt(
+        camera.position.x + targetX,
+        camera.position.y + targetY,
+        camera.position.z + targetZ
+      );
+
+      renderer.render(scene, camera);
+    }
+
+    function updateHudYaw() {
+      const yawDisplay = document.getElementById('hud-yaw-display');
+      if (!yawDisplay) return;
+      let deg = Math.round((-cameraYaw * (180 / Math.PI)) % 360);
+      if (deg < 0) deg += 360;
+
+      let dir = "정면 개구부";
+      if (deg >= 45 && deg < 135) dir = "우측 벽면";
+      else if (deg >= 135 && deg < 225) dir = "후방 벽면";
+      else if (deg >= 225 && deg < 315) dir = "좌측 벽면";
+
+      yawDisplay.innerText = `시선 방향: ${deg}° (${dir})`;
+    }
+
+    function moveFloor(delta) {
+      const totalFloors = Math.ceil(galleryItems.length / FRAMES_PER_FLOOR) || 1;
+      let nextFloor = currentFloor + delta;
+      if (nextFloor < 1) nextFloor = 1;
+      if (nextFloor > totalFloors) nextFloor = totalFloors;
+      setFloor(nextFloor);
+    }
+
+    function setFloor(targetFloor) {
+      currentFloor = targetFloor;
+      targetCameraY = (currentFloor - 1) * WALL_HEIGHT + 4.5; // 각 층 관람자 눈높이
+      updateFloorUI();
+    }
+
+    function updateFloorUI() {
+      const totalFloors = Math.ceil(galleryItems.length / FRAMES_PER_FLOOR) || 1;
+      const floorBadge = document.getElementById('current-floor-badge');
+      const totalBadge = document.getElementById('total-floors-badge');
+      const quickBadge = document.getElementById('quick-floor-indicator');
+
+      if (floorBadge) floorBadge.innerText = `${currentFloor}층 관람대`;
+      if (totalBadge) totalBadge.innerText = `(총 ${totalFloors}층 전시관)`;
+      if (quickBadge) quickBadge.innerText = `${currentFloor}F`;
+    }
+
+    function reset3DCamera() {
+      cameraYaw = 0;
+      cameraPitch = 0;
+      setFloor(1);
+      updateHudYaw();
+    }
+
+    function onWindowResize() {
+      const container = document.getElementById('three-canvas-container');
+      if (!container || !renderer || !camera) return;
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    function openModal(id) {
+      const item = galleryItems.find(i => i.id === id);
+      if (!item || item.isLoading) return;
+
+      const idx = galleryItems.findIndex(i => i.id === id);
+      const floor = Math.floor(idx / FRAMES_PER_FLOOR) + 1;
+      const slot = (idx % FRAMES_PER_FLOOR) + 1;
+
+      currentModalItem = item;
+      document.getElementById('modal-img').src = item.imageUrl;
+      document.getElementById('modal-title').innerText = item.subject;
+      document.getElementById('modal-style-badge').innerText = item.style;
+      document.getElementById('modal-location-badge').innerText = `${floor}층 전시장 · ${slot < 5 ? '내벽' : '외벽'} 벽면`;
+      document.getElementById('modal-prompt').innerText = item.prompt;
+      document.getElementById('modal-critique').innerText = item.critique;
+
+      document.getElementById('docent-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('docent-modal').classList.add('hidden');
+      stopTTS();
+    }
+
+    function toggleDocentTTS() {
+      if (!currentModalItem) return;
+      if (isPlayingTTS) {
+        stopTTS();
+      } else {
+        startTTS(currentModalItem.critique);
+      }
+    }
+
+    function startTTS(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('이 브라우저는 음성 재생(Web Speech API)을 지원하지 않습니다.');
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const tts = new SpeechSynthesisUtterance(text);
+      tts.lang = 'ko-KR';
+      tts.rate = 0.95;
+
+      tts.onstart = () => {
+        isPlayingTTS = true;
+        document.getElementById('tts-btn-text').innerText = "해설 정지하기";
+        document.getElementById('tts-icon').className = "fa-solid fa-volume-xmark text-amber-400 animate-pulse";
+      };
+
+      tts.onend = stopTTS;
+      tts.onerror = stopTTS;
+
+      window.speechSynthesis.speak(tts);
+    }
+
+    function stopTTS() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      isPlayingTTS = false;
+      const btnText = document.getElementById('tts-btn-text');
+      const icon = document.getElementById('tts-icon');
+      if (btnText) btnText.innerText = "AI 도슨트 음성 해설 듣기";
+      if (icon) icon.className = "fa-solid fa-volume-high text-amber-400";
+    }
+
+    function switchTab(tab) {
+      const atelierView = document.getElementById('view-atelier');
+      const galleryView = document.getElementById('view-gallery');
+      const btnAtelier = document.getElementById('tab-atelier');
+      const btnGallery = document.getElementById('tab-gallery');
+
+      if (tab === 'atelier') {
+        atelierView.classList.remove('hidden');
+        galleryView.classList.add('hidden');
+        btnAtelier.className = "px-5 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-white text-stone-900 border border-stone-200";
+        btnGallery.className = "px-5 py-2 rounded-lg text-sm font-semibold text-stone-600 hover:text-stone-900 transition-all";
+      } else {
+        atelierView.classList.add('hidden');
+        galleryView.classList.remove('hidden');
+        btnGallery.className = "px-5 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm bg-white text-stone-900 border border-stone-200";
+        btnAtelier.className = "px-5 py-2 rounded-lg text-sm font-semibold text-stone-600 hover:text-stone-900 transition-all";
+        setTimeout(onWindowResize, 50); // 탭 전환 시 3D 뷰포트 크기 자동 맞춤
+      }
+    }
+
+    function toggleAccordion(id) {
+      const content = document.getElementById(`acc-content-${id}`);
+      const icon = document.getElementById(`acc-icon-${id}`);
+      const isOpen = content.classList.contains('open');
+
+      document.querySelectorAll('.accordion-content').forEach(el => el.classList.remove('open'));
+      document.querySelectorAll('[id^="acc-icon-"]').forEach(el => el.classList.remove('rotate-180'));
+
+      if (!isOpen) {
+        content.classList.add('open');
+        icon.classList.add('rotate-180');
+      }
+    }
+  </script>
+</body>
+</html>
